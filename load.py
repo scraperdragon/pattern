@@ -16,11 +16,11 @@ class Cell(object):
     def __init__(self, x, y, state='U'):
         self.x = x
         self.y = y
-        self.state = state  # default: unknown
+        self.colour(state)  # default: unknown
 
-    def set_state(self, state):
+    def colour(self, state):
         assert state in 'FEU'
-        self.state = state
+        self.colour = state
 
 
 class GameState(object):
@@ -64,7 +64,11 @@ class GameState(object):
         self.moves.append(row)
 
     def apply_moves(self):
-        pass  # TODO
+        for move in self.moves:
+            feu, left, top, width, height = move
+            for x in range(left, left + width):
+                for y in range(top, top + height):
+                    self.grid.cell(x,y).colour(feu)
 
 
 def main():
