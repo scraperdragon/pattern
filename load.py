@@ -1,3 +1,6 @@
+import logging
+logging.basicConfig(level=logging.INFO)
+
 class Grid(list):
     def __init__(self, x_size, y_size):
         self.x = x_size
@@ -57,12 +60,14 @@ class GameState(object):
         # FEU: fill (black) / empty (white) / unknown (grey)
         # left, top, (0-based)
         # width, height (cells)
-
-        if not hasattr(self, 'move'):
+        logging.info("MOVE {!r}".format(s))
+        if not hasattr(self, 'moves'):
             self.moves = []
         row = [s[0]]
         row.extend(int(x) for x in s[1:].split(','))
+        print row
         self.moves.append(row)
+        print self.moves
 
     def apply_moves(self):
         for move in self.moves:
