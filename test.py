@@ -12,3 +12,7 @@ def test_grid_cell_interactions():
     assert_equal(x.cell(39,2).x, 39)
     assert_equal(x.cell(39,2).y, 2)
 
+def test_to_moves():
+    gs = GameState()
+    gs.load('fixtures/solved')
+    assert gs.moves == [['F', 6, 14, 7, 1]]

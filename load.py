@@ -21,7 +21,7 @@ class Cell(object):
 
     def colour(self, state):
         assert state in 'FEU'
-        self.colour = state
+        self.state = state
 
 
 class GameState(object):
@@ -73,10 +73,7 @@ class GameState(object):
 
 
 def main():
-    gs = GameState()
-    gs.load('fixtures/solved')
-    print gs.moves
-    print "ok"
+    pass
 
 if __name__ == "__main__":
     main()
