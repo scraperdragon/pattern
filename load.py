@@ -12,6 +12,7 @@ class Grid(list):
     def cell(self, x, y):
         return self[y][x]
 
+
 class Cell(object):
     def __init__(self, x, y, state='U'):
         self.x = x
@@ -68,7 +69,7 @@ class GameState(object):
             feu, left, top, width, height = move
             for x in range(left, left + width):
                 for y in range(top, top + height):
-                    self.grid.cell(x,y).colour(feu)
+                    self.grid.cell(x, y).colour(feu)
 
 
 def main():
