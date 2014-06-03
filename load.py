@@ -1,8 +1,16 @@
-class Grid(object):
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+class Grid(list):
+    def __init__(self, x_size, y_size):
+        self.x = x_size
+        self.y = y_size
+        for y in range(y_size):
+            row = list()
+            for x in range(x_size):
+                row.append(Cell(x, y))
 
+            self.append(row)
+
+    def cell(self, x, y):
+        return self[x][y]
 
 class Cell(object):
     def __init__(self, x, y, state='U'):
