@@ -20,3 +20,4 @@ def test_to_moves():
     gs.load('fixtures/solved')
     assert gs.moves == [['F', 11, 4, 1, 7],
                         ['F', 6, 14, 7, 1]]
+    gs.check_vs_solved()

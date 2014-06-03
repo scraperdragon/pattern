@@ -1,6 +1,7 @@
 import logging
 logging.basicConfig(level=logging.INFO)
 
+
 class Grid(list):
     def __init__(self, x_size, y_size):
         self.x = x_size
@@ -19,6 +20,15 @@ class Grid(list):
         def row_text(row):
             return ''.join(cell.state for cell in row)
         print '\n'.join(row_text(row) for row in self)
+
+    def as_solution(self):
+        def row_text(row):
+            return ''.join(cell.state for cell in row)
+        concat = ''.join(row_text(row) for row in self)
+        for pair in ['F1', 'E0', 'U9']:
+            concat = concat.replace(pair[0], pair[1])
+        return concat
+
 
 class Cell(object):
     def __init__(self, x, y, state='U'):
@@ -46,9 +56,13 @@ class GameState(object):
     def dont_care(*args, **kwargs):
         pass
 
-    SAVEFILE = VERSION = SEED = AUXINFO = SOLVE = dont_care
+    SAVEFILE = VERSION = SEED = AUXINFO = dont_care
     NSTATES = STATEPOS = CPARAMS = dont_care
     # TODO - how is CPARAMS different to PARAMS?
+
+    def SOLVE(self, s):
+        assert s[0] == 'S'
+        self.solved = s[1:]  ## just record
 
     def GAME(self, s):
         assert s == 'Pattern'
@@ -72,9 +86,7 @@ class GameState(object):
             self.moves = []
         row = [s[0]]
         row.extend(int(x) for x in s[1:].split(','))
-        print row
         self.moves.append(row)
-        print self.moves
 
     def apply_moves(self):
         for move in self.moves:
@@ -83,11 +95,24 @@ class GameState(object):
                 for y in range(top, top + height):
                     self.grid.cell(x, y).colour(feu)
 
+    def check_vs_solved(self):
+        if not hasattr(self, 'solved'):
+            raise RuntimeError("No solution available.")
+        grid_sol = self.grid.as_solution()
+        assert len(self.solved) == len(grid_sol)
+        for pair in zip(list(self.solved), list(grid_sol)):
+            assert pair[0] == pair[1] or \
+                   pair[1] == '9', \
+                   "Expected {}, had {} at {}".format(pair[0], pair[1], -1)
+
 
 def main():
     gs = GameState()
     gs.load('fixtures/solved')
     gs.pprint()
+    gs.check_vs_solved()
+
+    print gs.heads
 
 if __name__ == "__main__":
     main()
