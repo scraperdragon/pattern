@@ -15,6 +15,10 @@ class Grid(list):
     def cell(self, x, y):
         return self[y][x]
 
+    def pprint(self):
+        def row_text(row):
+            return ''.join(cell.state for cell in row)
+        print '\n'.join(row_text(row) for row in self)
 
 class Cell(object):
     def __init__(self, x, y, state='U'):
@@ -28,6 +32,9 @@ class Cell(object):
 
 
 class GameState(object):
+    def pprint(self):
+        return self.grid.pprint()
+
     def load(self, filename):
         with open(filename, "r") as f:
             lines = f.readlines()
@@ -78,7 +85,9 @@ class GameState(object):
 
 
 def main():
-    pass
+    gs = GameState()
+    gs.load('fixtures/solved')
+    gs.pprint()
 
 if __name__ == "__main__":
     main()
