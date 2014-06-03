@@ -10,7 +10,7 @@ class Grid(list):
             self.append(row)
 
     def cell(self, x, y):
-        return self[x][y]
+        return self[y][x]
 
 class Cell(object):
     def __init__(self, x, y, state='U'):
