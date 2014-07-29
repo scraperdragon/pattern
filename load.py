@@ -1,6 +1,38 @@
 import logging
 logging.basicConfig(level=logging.INFO)
 
+class OutOfBoundsError(IndexError):
+    pass
+
+class Row(list):
+    def __init__(self, **kwargs):
+        self.grid = kwargs['grid']
+        assert isinstance(self.grid, Grid)
+
+        self.is_x = kwargs['is_x']
+        assert isinstance(self.is_x, bool)
+
+        if self.is_x:
+            self.size = self.grid.x
+        else:
+            self.size = self.grid.y
+
+        self.offset = kwargs['offset']
+        assert isinstance(self.offset, int)
+
+        for i in range(self.size):
+            if self.is_x:
+                self.append(self.grid.cell(i, self.offset))
+            else:
+                self.append(self.grid.cell(self.offset, i))
+
+        self.numbers = kwargs['numbers']
+        assert isinstance(self.numbers, list)
+
+
+    def __repr__(self):
+        row = ''.join(str(x) for x in self)
+        return "{!r}: {!r}".format(self.numbers, row)
 
 class Grid(list):
     def __init__(self, x_size, y_size):
@@ -14,7 +46,11 @@ class Grid(list):
             self.append(row)
 
     def cell(self, x, y):
-        return self[y][x]
+        try:
+            return self[y][x]
+        except IndexError:
+            raise OutOfBoundsError('cell({!r}, {!r}) asked for, '\
+                'but grid is ({!r}, {!r})'.format(x, y, self.x, self.y))
 
     def pprint(self):
         def row_text(row):
@@ -36,6 +72,9 @@ class Cell(object):
         self.y = y
         self.colour(state)  # default: unknown
 
+    def __repr__(self):
+        return self.state
+
     def colour(self, state):
         assert state in 'FEU'
         self.state = state
@@ -52,6 +91,18 @@ class GameState(object):
             function, _, value = line.strip().split(':')
             getattr(self, function.strip())(value)
         self.apply_moves()
+
+    def rows(self):
+        for x in range(self.grid.x):
+            yield Row(grid=self.grid,
+                      is_x=False,
+                      offset=x,
+                      numbers=self.heads_x[x])
+        for y in range(self.grid.y):
+            yield Row(grid=self.grid,
+                      is_x=True,
+                      offset=y,
+                      numbers=self.heads_y[y])
 
     def dont_care(*args, **kwargs):
         pass
@@ -73,9 +124,13 @@ class GameState(object):
         self.grid = Grid(*self.size)
 
     def DESC(self, s):
+        def intify(l):
+            return [int(i) for i in l]
         niceheads = [h.split('.') for h in s.split('/')]
         self.heads = [niceheads[:self.size_x], niceheads[self.size_x:]]
-        self.heads_x, self.heads_y = self.heads
+        self.raw_heads_x, self.raw_heads_y = self.heads
+        self.heads_x = map(intify, self.raw_heads_x)
+        self.heads_y = map(intify, self.raw_heads_y)
 
     def MOVE(self, s):
         # FEU: fill (black) / empty (white) / unknown (grey)

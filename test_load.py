@@ -21,3 +21,12 @@ def test_to_moves():
     assert gs.moves == [['F', 11, 4, 1, 7],
                         ['F', 6, 14, 7, 1]]
     gs.check_vs_solved()
+
+
+def test_rows():
+    gs = GameState()
+    gs.load('fixtures/solved')
+    last_row = list(gs.rows())[-1]
+    assert_equal(last_row.is_x, True)
+    assert_equal(last_row.numbers, [3, 9])
+    assert_equal(list(str(x) for x in last_row), list('UUUUUUFFFFFFFUU'))
