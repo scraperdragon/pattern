@@ -34,6 +34,45 @@ class Row(list):
         row = ''.join(str(x) for x in self)
         return "{!r}: {!r}".format(self.numbers, row)
 
+    def _increment(self, given_pos):
+        # given a set of start positions for each of the black
+        # chunks, get the next set of start positions.
+
+        i_row = list(given_pos)
+        print "recieved {!r}".format(i_row)
+        for i in range(len(i_row)-1, -1, -1):
+            # for the numbers, going backward
+            print "incrementing i_row[{!r}]".format(i)
+            i_row[i] = i_row[i] + 1
+            for j in range(i+1, len(i_row)-1):
+                # set to minimum values
+                i_row[j] = i_row[j-1] + 1 + self.numbers[j-1]
+                print "resetting i_row[{!r}] to {!r}".format(j, i_row[j])
+            # return if we've not gone over budget
+            if i_row[-1] + self.numbers[-1] <= self.size:
+                print "yay! {!r}".format(i_row)
+                return i_row
+            else:
+                print "boo! {!r} is too big: {!r}+{!r} > {!r}".format(i_row, i_row[-1], self.numbers[-1], self.size)
+        # TODO we're done here
+        raise StopIteration
+
+    def iterate_row(self):
+
+        """create all self-consistent possibilities for a row"""
+        start_cell = list(self.numbers)
+        for i in range(len(start_cell)):
+            start_cell[i] = sum(self.numbers[:i]) + i
+
+        yield start_cell
+        while True:
+            start_cell = self._increment(start_cell)
+            yield start_cell
+            # check if valid against known row details
+
+
+
+
 class Grid(list):
     def __init__(self, x_size, y_size):
         self.x = x_size

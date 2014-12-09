@@ -1,4 +1,4 @@
-from load import Grid, Cell, GameState
+from load import Grid, Cell, GameState, Row
 from nose.tools import assert_equal
 
 
@@ -30,3 +30,14 @@ def test_rows():
     assert_equal(last_row.is_x, True)
     assert_equal(last_row.numbers, [3, 9])
     assert_equal(list(str(x) for x in last_row), list('UUUUUUFFFFFFFUU'))
+
+
+def test_first_row_iteration():
+    row = Row(grid=Grid(20, 3),
+              is_x=False,
+              offset=0,
+              numbers=[1, 2, 3, 4])
+    it = list(row.iterate_row())
+    print it
+    assert_equal(it[0], [0, 2, 5, 9])
+    assert_equal(it[1], [0, 2, 5, 10])
