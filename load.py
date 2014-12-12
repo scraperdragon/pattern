@@ -44,7 +44,8 @@ class Row(list):
             # for the numbers, going backward
             print "incrementing i_row[{!r}]".format(i)
             i_row[i] = i_row[i] + 1
-            for j in range(i+1, len(i_row)-1):
+            print "foo: {}, {}".format(i+1, len(i_row)-1)
+            for j in range(i+1, len(i_row)):
                 # set everything after this point to minimum values
                 i_row[j] = i_row[j-1] + 1 + self.numbers[j-1]
                 print "resetting i_row[{!r}] to {!r}".format(j, i_row[j])
