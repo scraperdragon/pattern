@@ -45,10 +45,10 @@ class Row(list):
             print "incrementing i_row[{!r}]".format(i)
             i_row[i] = i_row[i] + 1
             for j in range(i+1, len(i_row)-1):
-                # set to minimum values
+                # set everything after this point to minimum values
                 i_row[j] = i_row[j-1] + 1 + self.numbers[j-1]
                 print "resetting i_row[{!r}] to {!r}".format(j, i_row[j])
-            # return if we've not gone over budget
+            # return value if we've not gone over budget
             if i_row[-1] + self.numbers[-1] <= self.size:
                 print "yay! {!r}".format(i_row)
                 return i_row

@@ -33,7 +33,7 @@ def test_rows():
 
 
 def test_first_row_iteration():
-    row = Row(grid=Grid(20, 3),
+    row = Row(grid=Grid(3, 20),
               is_x=False,
               offset=0,
               numbers=[1, 2, 3, 4])
