@@ -29,7 +29,6 @@ class Row(list):
         self.numbers = kwargs['numbers']
         assert isinstance(self.numbers, list)
 
-
     def __repr__(self):
         row = ''.join(str(x) for x in self)
         return "{!r}: {!r}".format(self.numbers, row)
@@ -72,8 +71,6 @@ class Row(list):
             # check if valid against known row details
 
 
-
-
 class Grid(list):
     def __init__(self, x_size, y_size):
         self.x = x_size
@@ -89,7 +86,7 @@ class Grid(list):
         try:
             return self[y][x]
         except IndexError:
-            raise OutOfBoundsError('cell({!r}, {!r}) asked for, '\
+            raise OutOfBoundsError('cell({!r}, {!r}) asked for, '
                 'but grid is ({!r}, {!r})'.format(x, y, self.x, self.y))
 
     def pprint(self):
@@ -153,7 +150,7 @@ class GameState(object):
 
     def SOLVE(self, s):
         assert s[0] == 'S'
-        self.solved = s[1:]  ## just record
+        self.solved = s[1:]  # just record
 
     def GAME(self, s):
         assert s == 'Pattern'
