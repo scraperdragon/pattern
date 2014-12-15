@@ -77,20 +77,24 @@ class Row(list):
         position = 0
         valid = True
         for start, length in zip(possible, self.numbers):
-            if position < start:
+            while position < start:
                 valid = valid and self[position].can_be('E')
                 position = position + 1
-            elif position < start + length:
+            while position < start + length:
                 valid = valid and self[position].can_be('F')
                 position = position + 1
-            else:
-                # we are past the applicability of this pair
-                # therefore we should pass onto the next
-                continue
         while position < self.size:  # TODO off by one?
             valid = valid and self[position].can_be('E')
             position = position + 1
         return valid
+
+    def replace(self, gestalt_row):
+        """replace all cells with gestalt cells"""
+        assert len(gestalt_row) == len(self)
+        for gestalt_cell, orig_cell in zip(gestalt_row, self):
+            assert gestalt_cell == orig_cell.state or orig_cell.state == 'U',\
+                 "from {!r} to {} is forbidden".format(orig_cell, gestalt_cell)
+            orig_cell.colour(gestalt_cell)
 
 
 class Grid(list):

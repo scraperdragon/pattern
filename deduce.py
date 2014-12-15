@@ -1,35 +1,36 @@
 from load import GameState  # Grid, Cell
 
 
-def LogicalImpossibilityError(Exception):
-    """This cell can be neither filled nor unfilled"""
-    pass
+def poss_cells(possible, row):
+    # TODO: test hard, copy to validate_possible_row
+    position = 0
+    output = []
+    for start, length in zip(possible, row.numbers):
+        while position < start:
+            output.append('E')
+            position = position + 1
+        while position < start + length:
+            output.append('F')
+            position = position + 1
+    while position < row.size:  # TODO off by one?
+        output.append('E')
+        position = position + 1
+
+    assert len(output) == len(row)
+    # print possible, row, output
+    return output
 
 
-def VirtualCell(dict):
-    OPTIONS = [True, False]
-    # True = 'F'illed, False = 'E'mpty
-
-    for option in OPTIONS:
-        self[option] = False
-
-    def can_be(self, value):
-        assert value in OPTIONS
-        self[value] = True
-
-    def is_valid(self):
-        """True/False if only one possibility.
-           None if both are valid.
-           Raises an error if neither are."""
-        if not self[True] and not self[False]:
-            raise LogicalImpossibilityError
-        if self[True] and not self[False]:
-            return True
-        if not self[True] and self[False]:
-            return False
-        if self[True] and self[False]:
-            return None
-        raise SyntaxError('Impossible!')
+def gestalt_row(row):
+    gestalt = list('-' * row.size)
+    for possibility in row.options:
+        cells = poss_cells(possibility, row)
+        for i, cell in enumerate(cells):
+            if gestalt[i] == '-':
+                gestalt[i] = cell  # if unknown, set to known value
+            elif gestalt[i] != cell:
+                gestalt[i] = 'U'   # if both options valid, set to unknown
+    return gestalt
 
 
 def make_state(filename):
@@ -43,8 +44,12 @@ def deduce(state):
     For each rowcol, use sliding windows to see which cells remain permamently
     on. These should be compared to existing known cells.
     """
-    for row in state.rows():
-        row_solve(row)
+    progress = False
+    while True:
+        for row in state.rows():
+            progress = row_solve(row) or progress
+        if not progress:
+            break
 
 
 def row_solve(row):
@@ -52,6 +57,7 @@ def row_solve(row):
     Given a row, attempt to solve it, at least partially.
     using *only* numbers and list(row)
     """
+    progress = False
     print repr(row)
     for option in row.options:
         print repr(option)
@@ -59,9 +65,17 @@ def row_solve(row):
             # discard if fails to match known facts
             row.options.remove(option)
             print "removed option"
-        # keep record of possible values, so that at the end
-        #      we can say "these cells are definately this"
-        assert row.options
+    g = ''.join(gestalt_row(row))
+    s = str(row)
+    if g != s:
+        # TODO  make row values equal to gestalt row values:
+        # congratulations, you've made progress!
+        print "MADE PROGRESS!"
+        progress = True
+        row.replace(g)
+
+    assert row.options  # we haven't destroyed all possibilities! :)
+    return progress
 
 state = make_state('fixtures/solved')
 deduce(state)
