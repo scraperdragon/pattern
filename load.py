@@ -1,8 +1,10 @@
 import logging
 logging.basicConfig(level=logging.INFO)
 
+
 class OutOfBoundsError(IndexError):
     pass
+
 
 class Row(list):
     def __init__(self, **kwargs):
@@ -47,18 +49,18 @@ class Row(list):
             for j in range(i+1, len(i_row)):
                 # set everything after this point to minimum values
                 i_row[j] = i_row[j-1] + 1 + self.numbers[j-1]
-                logging.debug("resetting i_row[{!r}] to {!r}".format(j, i_row[j]))
+                logging.debug("reset i_row[{!r}] to {!r}".format(j, i_row[j]))
             # return value if we've not gone over budget
             if i_row[-1] + self.numbers[-1] <= self.size:
                 logging.debug("yay! {!r}".format(i_row))
                 return i_row
             else:
-                logging.debug("boo! {!r} is too big: {!r}+{!r} > {!r}".format(i_row, i_row[-1], self.numbers[-1], self.size))
-        # TODO we're done here
+                msg = 'boo {!r} is too big: {!r}+{!r} > {!r}'
+                values = [i_row, i_row[-1], self.numbers[-1], self.size]
+                logging.debug(msg.format(*values))
         raise StopIteration
 
     def iterate_row(self):
-
         """create all self-consistent possibilities for a row"""
         start_cell = list(self.numbers)
         for i in range(len(start_cell)):
@@ -89,8 +91,8 @@ class Grid(list):
         try:
             return self[y][x]
         except IndexError:
-            raise OutOfBoundsError('cell({!r}, {!r}) asked for, '
-                'but grid is ({!r}, {!r})'.format(x, y, self.x, self.y))
+            msg = 'cell({!r}, {!r}) asked for, but grid is ({!r}, {!r})'
+            raise OutOfBoundsError(msg.format(x, y, self.x, self.y))
 
     def pprint(self):
         def row_text(row):
@@ -197,8 +199,8 @@ class GameState(object):
         assert len(self.solved) == len(grid_sol)
         for pair in zip(list(self.solved), list(grid_sol)):
             assert pair[0] == pair[1] or \
-                   pair[1] == '9', \
-                   "Expected {}, had {} at {}".format(pair[0], pair[1], -1)
+                pair[1] == '9', \
+                "Expected {}, had {} at {}".format(pair[0], pair[1], -1)
 
 
 def main():
