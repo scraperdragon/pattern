@@ -38,22 +38,22 @@ class Row(list):
         # chunks, get the next set of start positions.
 
         i_row = list(given_pos)
-        print "recieved {!r}".format(i_row)
+        logging.debug("recieved {!r}".format(i_row))
         for i in range(len(i_row)-1, -1, -1):
             # for the numbers, going backward
-            print "incrementing i_row[{!r}]".format(i)
+            logging.debug("incrementing i_row[{!r}]".format(i))
             i_row[i] = i_row[i] + 1
-            print "foo: {}, {}".format(i+1, len(i_row)-1)
+            logging.debug("foo: {}, {}".format(i+1, len(i_row)-1))
             for j in range(i+1, len(i_row)):
                 # set everything after this point to minimum values
                 i_row[j] = i_row[j-1] + 1 + self.numbers[j-1]
-                print "resetting i_row[{!r}] to {!r}".format(j, i_row[j])
+                logging.debug("resetting i_row[{!r}] to {!r}".format(j, i_row[j]))
             # return value if we've not gone over budget
             if i_row[-1] + self.numbers[-1] <= self.size:
-                print "yay! {!r}".format(i_row)
+                logging.debug("yay! {!r}".format(i_row))
                 return i_row
             else:
-                print "boo! {!r} is too big: {!r}+{!r} > {!r}".format(i_row, i_row[-1], self.numbers[-1], self.size)
+                logging.debug("boo! {!r} is too big: {!r}+{!r} > {!r}".format(i_row, i_row[-1], self.numbers[-1], self.size))
         # TODO we're done here
         raise StopIteration
 
@@ -69,6 +69,9 @@ class Row(list):
             start_cell = self._increment(start_cell)
             yield start_cell
             # check if valid against known row details
+
+    def validate_possible_row(self, possible):
+        pass
 
 
 class Grid(list):

@@ -1,6 +1,6 @@
 from load import GameState  # Grid, Cell
 
-def LogicalImpossibilityError(Exception)
+def LogicalImpossibilityError(Exception):
     """This cell can be neither filled nor unfilled"""
     pass
 
