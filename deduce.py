@@ -1,8 +1,10 @@
 from load import GameState  # Grid, Cell
 
+
 def LogicalImpossibilityError(Exception):
     """This cell can be neither filled nor unfilled"""
     pass
+
 
 def VirtualCell(dict):
     OPTIONS = [True, False]
@@ -44,12 +46,22 @@ def deduce(state):
     for row in state.rows():
         row_solve(row)
 
+
 def row_solve(row):
     """
     Given a row, attempt to solve it, at least partially.
     using *only* numbers and list(row)
     """
-    pass
+    print repr(row)
+    for option in row.options:
+        print repr(option)
+        if not row.validate_possible_row(option):
+            # discard if fails to match known facts
+            row.options.remove(option)
+            print "removed option"
+        # keep record of possible values, so that at the end
+        #      we can say "these cells are definately this"
+        assert row.options
 
 state = make_state('fixtures/solved')
 deduce(state)

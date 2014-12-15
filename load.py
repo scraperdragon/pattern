@@ -30,6 +30,7 @@ class Row(list):
 
         self.numbers = kwargs['numbers']
         assert isinstance(self.numbers, list)
+        self.options = list(self.iterate_row())
 
     def __repr__(self):
         row = ''.join(str(x) for x in self)
@@ -73,7 +74,23 @@ class Row(list):
             # check if valid against known row details
 
     def validate_possible_row(self, possible):
-        pass
+        position = 0
+        valid = True
+        for start, length in zip(possible, self.numbers):
+            if position < start:
+                valid = valid and self[position].can_be('E')
+                position = position + 1
+            elif position < start + length:
+                valid = valid and self[position].can_be('F')
+                position = position + 1
+            else:
+                # we are past the applicability of this pair
+                # therefore we should pass onto the next
+                continue
+        while position < self.size:  # TODO off by one?
+            valid = valid and self[position].can_be('E')
+            position = position + 1
+        return valid
 
 
 class Grid(list):
@@ -120,6 +137,10 @@ class Cell(object):
     def colour(self, state):
         assert state in 'FEU'
         self.state = state
+
+    def can_be(self, state):
+        assert state in 'FE'
+        return self.state == state or self.state == 'U'
 
 
 class GameState(object):
